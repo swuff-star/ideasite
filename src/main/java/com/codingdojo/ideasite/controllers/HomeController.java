@@ -218,6 +218,11 @@ public class HomeController {
         	return "redirect:/home";
         }
         
+        List<Comment> comments = idea.getComments();
+        for (Comment comment : comments) {
+            commentService.deleteComment(comment.getId());
+        }
+        
         ideaServ.deleteIdea(pId);
         
         return "redirect:/home";
