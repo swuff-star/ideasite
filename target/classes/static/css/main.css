@@ -106,8 +106,13 @@ body {
   text-decoration: none;
 }
 
-.header-container h1 {
-  margin: 0;
+.header-container {
+  background-color: #ff0000;
+  text-align: left;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .log-out-button {
@@ -197,4 +202,11 @@ form.d-flex.justify-content-center input[type="submit"] {
   border: none;
   font-size: 16px;
   cursor: pointer;
+}
+
+
+.product-header {
+  margin: 0;
+  color: #ffffff;
+  font-size: 24px;
 }

@@ -12,51 +12,51 @@ import com.codingdojo.ideasite.repositories.IdeaRepository;
 
 @Service
 public class IdeaService {
-	private final IdeaRepository productRepository;
+	private final IdeaRepository ideaRepository;
 	
 	@Autowired
-	public IdeaService(IdeaRepository prodRepository) {
-		this.productRepository = prodRepository;
+	public IdeaService(IdeaRepository ideaRepository) {
+		this.ideaRepository = ideaRepository;
 	}
 	
-	public List<Idea> allGames() {
-		return productRepository.findAll();
+	public List<Idea> allIdeas() {
+		return ideaRepository.findAll();
 	}
 	
-	public Idea createProduct(Idea prod) {
-		return productRepository.save(prod);
+	public Idea createIdea(Idea idea) {
+		return ideaRepository.save(idea);
 	}
 	
-	public Idea findProduct(Long id) {
-		Optional<Idea> prodOptional = productRepository.findById(id);
-		return prodOptional.orElse(null);
+	public Idea findIdea(Long id) {
+		Optional<Idea> ideaOptional = ideaRepository.findById(id);
+		return ideaOptional.orElse(null);
 	}
 	
-	public Idea updateProduct(Long id, String name, String desc) {
-		Idea prod = productRepository.findById(id).orElse(null);
-		if (prod != null) {
-			prod.setpName(name);
-			prod.setpDesc(desc);
-			return productRepository.save(prod);
+	public Idea updateIdea(Long id, String name, String desc) {
+		Idea idea = ideaRepository.findById(id).orElse(null);
+		if (idea != null) {
+			idea.setpName(name);
+			idea.setpDesc(desc);
+			return ideaRepository.save(idea);
 		}
 		return null;
 	}
 	
-	public Idea updateProductFromProd(Idea game) {
-		return productRepository.save(game);
+	public Idea updateIdeaFromIdea(Idea idea) {
+		return ideaRepository.save(idea);
 	}
 	
-	public void deleteProduct(Long id) {
-		productRepository.deleteById(id);
+	public void deleteIdea(Long id) {
+		ideaRepository.deleteById(id);
 	}
 	
 	public List<Idea> ideasAlphabetical() {
-	    List<Idea> prods = productRepository.findAll();
-	    prods.sort(Comparator.comparing(Idea::getpName));
-	    return prods;
+	    List<Idea> ideas = ideaRepository.findAll();
+	    ideas.sort(Comparator.comparing(Idea::getpName));
+	    return ideas;
 	}
 	
-	public List<Idea> findProductsByUserId(Long userId) {
-	    return productRepository.findAllByUserId(userId);
+	public List<Idea> findIdeaByUserId(Long userId) {
+	    return ideaRepository.findAllByUserId(userId);
 	}
 }

@@ -3,14 +3,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Product Information</title>
-  <link href="css/main.css" rel="stylesheet">
+  <title>Concept Information</title>
+  <link href="css/main.css" rel="stylesheet"/>
 </head>
 
 <body>
-<div style="font-family: Monospace">
+<div>
   <div class="header-container">
-    <h1 class="product-header text-muted">${idea.pName}</h1>
+    <h1 class="text-muted">${idea.pName}</h1>
     <div class="view-all-concepts">
       <a href="/home" class="text-white">View All Concepts</a>
     </div>
@@ -44,6 +44,27 @@
       </c:if>
     </div>
   </div>
+  
+  <div class="container-fluid p-3 p-md-5">
+</div>
+
+<div class="container-fluid p-3 p-md-5">
+  <h2>Comments:</h2>
+  <ul>
+    <c:forEach var="comment" items="${comments}" varStatus="status">
+            <li>${comment.cMsg} - Comment by: ${commenterNames[status.index]}</li>
+        </c:forEach>
+  </ul>
+
+  <h2>Add a Comment:</h2>
+  <form action="<c:url value='/ideas/${idea.id}/add-comment'/>" method="post">
+    <div>
+      <label for="comment">Your Comment:</label>
+      <textarea name="cMsg" id="comment" required></textarea>
+    </div>
+    <button type="submit">Submit Comment</button>
+  </form>
+</div>
 
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
   <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>

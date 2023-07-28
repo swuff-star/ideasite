@@ -31,7 +31,6 @@ public class FileUploadUtil {
         if (imageData != null && imageData.length > 0) {
             return Base64.getEncoder().encodeToString(imageData);
         } else {
-            // Return a default image URL or base64-encoded placeholder image data
             return "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8HwV9DwAJhAHKcIjAAAAABJRU5ErkJggg==";
         }
     }

@@ -2,6 +2,7 @@ package com.codingdojo.ideasite.controllers;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,12 +16,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.codingdojo.ideasite.models.Comment;
 import com.codingdojo.ideasite.models.FileUploadUtil;
-import com.codingdojo.ideasite.models.LoginUser;
-
 import com.codingdojo.ideasite.models.Idea;
 import com.codingdojo.ideasite.models.IdeaForm;
+import com.codingdojo.ideasite.models.LoginUser;
 import com.codingdojo.ideasite.models.User;
+import com.codingdojo.ideasite.services.CommentService;
 import com.codingdojo.ideasite.services.IdeaService;
 import com.codingdojo.ideasite.services.UserService;
 
@@ -36,6 +38,9 @@ public class HomeController {
     
     @Autowired
     private IdeaService ideaServ;
+    
+    @Autowired
+    private CommentService commentService;
     
     @GetMapping("/")
     public String index(Model model) {
@@ -146,7 +151,7 @@ public class HomeController {
    	
         idea.setpImage(fullDir);
         
-        ideaServ.createProduct(idea);
+        ideaServ.createIdea(idea);
         
         FileUploadUtil.saveFile(uploadDir, fileName, imageFile);
         
@@ -155,8 +160,15 @@ public class HomeController {
 
     @GetMapping("/ideas/{id}")
     public String ideaInfo(@PathVariable("id") Long id, Model model, HttpSession session) {
-        Idea idea = ideaServ.findProduct(id);
+        Idea idea = ideaServ.findIdea(id);
         model.addAttribute("idea", idea);
+
+        List<Comment> comments = idea.getComments();
+        model.addAttribute("comments", comments);
+        
+        List<String> commenterNames = comments.stream().map(Comment::getCommenterName).collect(Collectors.toList());
+        model.addAttribute("commenterNames", commenterNames);
+
 
         String imageData = FileUploadUtil.convertImageToBase64(idea.getImageData());
         model.addAttribute("imageData", imageData);
@@ -172,20 +184,41 @@ public class HomeController {
         } else {
         	model.addAttribute("isOwner", false);
         }
-        
+
+        model.addAttribute("newComment", new Comment());
+
         return "concept_info";
+    }
+    
+    @PostMapping("/ideas/{ideaId}/add-comment")
+    public String addComment(@PathVariable("ideaId") Long ideaId, @ModelAttribute Comment newComment, HttpSession session) {
+        Long userId = (Long) session.getAttribute("userId");
+        if (userId == null) {
+            return "redirect:/login";
+        }
+
+        Idea idea = ideaServ.findIdea(ideaId);
+
+        User user = userServ.findUser(userId);
+
+        newComment.setIdea(idea);
+        newComment.setUser(user);
+
+        commentService.createComment(newComment);
+
+        return "redirect:/ideas/" + ideaId;
     }
  
     @PostMapping("/ideas/{id}/delete")
     public String deleteIdea(@PathVariable("id") Long pId, HttpSession session) {
     	Long userId = (Long) session.getAttribute("userId");
-        Idea idea = ideaServ.findProduct(pId);
+        Idea idea = ideaServ.findIdea(pId);
         
         if (userId == null || !idea.getUser().getId().equals(userId)) {
         	return "redirect:/home";
         }
         
-        ideaServ.deleteProduct(pId);
+        ideaServ.deleteIdea(pId);
         
         return "redirect:/home";
     }
@@ -194,7 +227,7 @@ public class HomeController {
     @GetMapping("/ideas/{id}/edit")
     public String editIdea(@PathVariable("id") Long gameId, Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
-        Idea idea = ideaServ.findProduct(gameId);
+        Idea idea = ideaServ.findIdea(gameId);
         
         if (userId == null || !idea.getUser().getId().equals(userId)) {
             return "redirect:/home";
@@ -214,7 +247,7 @@ public class HomeController {
     public String updateIdea(@PathVariable("id") Long pId, @Valid @ModelAttribute("ideaForm") IdeaForm ideaForm,
                              BindingResult result, Model model, HttpSession session) {
         Long userId = (Long) session.getAttribute("userId");
-        Idea idea = ideaServ.findProduct(pId);
+        Idea idea = ideaServ.findIdea(pId);
         
         if (userId == null) {
             return "redirect:/home";
@@ -231,14 +264,14 @@ public class HomeController {
         idea.setpName(ideaForm.getName());
         idea.setpDesc(ideaForm.getDesc());
         
-        ideaServ.updateProductFromProd(idea);
+        ideaServ.updateIdeaFromIdea(idea);
         
         return "redirect:/home";
     }
 
     @GetMapping("/users/{userId}/concepts")
     public String userProducts(@PathVariable("userId") Long userId, Model model) {
-        List<Idea> userIdeas = ideaServ.findProductsByUserId(userId);
+        List<Idea> userIdeas = ideaServ.findIdeaByUserId(userId);
         model.addAttribute("userIdeas", userIdeas);
         return "user_concepts";
     }

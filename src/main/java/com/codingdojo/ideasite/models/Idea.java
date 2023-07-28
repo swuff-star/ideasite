@@ -1,6 +1,6 @@
 package com.codingdojo.ideasite.models;
 
-import java.util.Base64;
+import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +11,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
@@ -41,6 +42,9 @@ public class Idea {
 	    @Lob
 	    @Column(name = "image_data", columnDefinition = "BLOB")
 	    private byte[] imageData;
+	    
+	    @OneToMany(mappedBy="idea", fetch = FetchType.LAZY)
+	    private List<Comment> comments;
 	    
 		public Idea() { }
 		
@@ -92,16 +96,20 @@ public class Idea {
 			this.imageData = imageData;
 		}
 
-		public void setImage(byte[] imageData2) {
-
-		}
-
 		public String getpImage() {
 			return pImage;
 		}
 
 		public void setpImage(String pImage) {
 			this.pImage = pImage;
+		}
+		
+		public List<Comment> getComments() {
+			return comments;
+		}
+		
+		public void setComments(List<Comment> comments) {
+			this.comments = comments;
 		}
 }
 

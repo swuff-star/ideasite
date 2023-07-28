@@ -40,7 +40,7 @@ public class User {
     private String confirm;
     
     @OneToMany(mappedBy="user", fetch = FetchType.LAZY)
-    private List<Idea> games;
+    private List<Idea> ideas;
   
     public User() {}
 
@@ -85,12 +85,12 @@ public class User {
 	}
   
 	
-	public List<Idea> getGames() {
-		return games;
+	public List<Idea> getIdeas() {
+		return ideas;
 	}
 	
-	public void setGames(List<Idea> games) {
-		this.games = games;
+	public void setIdeas(List<Idea> ideas) {
+		this.ideas = ideas;
 	}
 }
     
